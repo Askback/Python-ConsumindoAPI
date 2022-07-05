@@ -1,4 +1,5 @@
 import json
+import sys
 
 import requests
 
@@ -22,13 +23,21 @@ def parsing(resposta_texto):
         print("Erro ao fazer o Parsing do texto")
 
 
-def mostrar_paises(lista_paises):
-    for pais in lista_paises:
-        print(pais['name']['common'])
+def mostrar_paises():
+    texto_resposta = requisicao(URL)
+    if texto_resposta:
+        lista_de_paises = parsing(texto_resposta)
+        if lista_de_paises:
+            for pais in lista_de_paises:
+                print(pais['name']['common'])
 
 
-def numero_paises(lista_paises):
-    print(len(lista_paises))
+def numero_paises():
+    texto_resposta = requisicao(URL)
+    if texto_resposta:
+        lista_de_paises = parsing(texto_resposta)
+        if lista_de_paises:
+            return len(lista_de_paises)
 
 
 def mostrar_populacao(nome_pais):
@@ -55,13 +64,39 @@ def mostrar_moeda(nome_pais):
         print("Pais não encontrado")
 
 
+def ler_nome_pais():
+    try:
+        nome_do_pais = sys.argv[2]
+        return nome_do_pais
+    except:
+        print("\n é preciso digitar o nome do pais")
+
+
 if __name__ == "__main__":
-    texto_da_resposta = requisicao(URL)
-    if texto_da_resposta:
-        lista_paises = parsing(texto_da_resposta)
-        if lista_paises:
-            numero_paises(lista_paises)
-            mostrar_moeda(input("Digite o nome do pais: "))
+    if len(sys.argv) == 1:
+        print("### Bem vindo ao sistema de paises via CLI ###")
+        print("\nPara utiliza é muito simples, basta digitar:")
+        print("\npython paises.py <argumento> <pais>")
+        print("\n---Argumentos disponiveis: paises, numero, moeda, populacao ---")
+    else:
+        argumento1 = sys.argv[1]
+
+        if argumento1 == "numero":
+            quantidade_de_paises = numero_paises()
+            print("\nExistem no mundo {} países".format(quantidade_de_paises))
+        elif argumento1 == "paises":
+            mostrar_paises()
+        elif argumento1 == "moeda":
+            pais = ler_nome_pais()
+            if pais:
+                mostrar_moeda(pais)
+        elif argumento1 == "populacao":
+            pais = ler_nome_pais()
+            if pais:
+                mostrar_populacao(pais)
+        else:
+            print("\nArgumento inválido")
+
 
 
 
